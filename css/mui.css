@@ -1,0 +1,17 @@
+.MuiInput-root:focus:not(.Mui-disabled, .Mui-error):before {
+  @apply border-b-purple-200;
+}
+.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+  @apply border-b-purple-200;
+}
+
+.MuiInput-root:before,
+.MuiInput-root:after,
+/* .MuiInput-root:hover, */
+/* .MuiInput-root:hover:before, */
+/* .MuiInput-root:hover:after, */
+.Mui-focused:before,
+.Mui-focused:after {
+  border-bottom: none;
+  /* display: none; */
+}

@@ -1,0 +1,7 @@
+@tailwind components;
+
+@layer components {
+  .submit-button {
+    @apply rounded border-2 border-purple-700 bg-purple-500 px-2 py-1 hover:bg-purple-700 active:bg-purple-500 text-white;
+  }
+}
