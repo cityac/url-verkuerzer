@@ -2,6 +2,11 @@
 
 @layer components {
   .submit-button {
-    @apply rounded border-2 border-purple-700 bg-purple-500 px-2 py-1 hover:bg-purple-700 active:bg-purple-500 text-white;
+    @apply rounded border-2 border-purple-700 bg-purple-500 px-2 py-1 text-white hover:bg-purple-700 active:bg-purple-500;
   }
+
+  .form-input {
+    @apply w-full rounded-md border-2 border-purple-200 px-2 hover:border-purple-300 active:border-purple-400 focus:border-purple-950 focus:ring-4;
+  }
+
 }

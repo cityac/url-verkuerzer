@@ -4,6 +4,7 @@
 
 @import './mui.css';
 @import './components.css';
+@import './utilities.css';
 
 :root {
   --background: #ffffff;

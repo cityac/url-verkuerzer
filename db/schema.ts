@@ -12,7 +12,6 @@ const createdAt = () =>
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull()
 
-
 export const users = sqliteTable('users', {
   id: id(),
   createdAt: createdAt(),
@@ -36,7 +35,7 @@ export const links = sqliteTable(
   },
   (table) => ({
     unq: unique().on(table.createdById, table.shortHash),
-  })
+  }),
 )
 
 export const linksRelations = relations(links, ({ one }) => ({
@@ -45,4 +44,3 @@ export const linksRelations = relations(links, ({ one }) => ({
     fields: [links.createdById],
   }),
 }))
-

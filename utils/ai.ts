@@ -1,9 +1,8 @@
+import { openApiKey } from '@/utils/config'
+import { PromptTemplate } from '@langchain/core/prompts'
 import { ChatOpenAI } from '@langchain/openai'
 import { StructuredOutputParser } from 'langchain/output_parsers'
 import z from 'zod'
-import { PromptTemplate } from '@langchain/core/prompts'
-import {openApiKey} from '@/utils/config'
-
 
 /*
 You are smart title summarizer
@@ -23,11 +22,11 @@ Ouput next-main-features
 const schema = z.object({
   shortHashes: z.array(z.string()).describe(
     `array of short 3 words summary to use it as named shortened link. Each of 3 words must be maximum 5 characters. So be smart and shorten each word and concat. For example automation-income-strategy should be shortened to autom-incom-strat
-     output 3 options in json array like ["autom-incom-strat", "incom-strat-pilot", "auto-pilot-strat"]`),
+     output 3 options in json array like ["autom-incom-strat", "incom-strat-pilot", "auto-pilot-strat"]`,
+  ),
   summary: z.string().describe('quick summary of the provided link page.'),
   subject: z.string().describe('header of the page'),
-  error: z.string().describe("input provided is not valid URL")
-  
+  error: z.string().describe('input provided is not valid URL'),
 })
 
 const parser = StructuredOutputParser.fromZodSchema(schema)
@@ -52,8 +51,7 @@ export const analyse = async (content: string) => {
 const getPrompt = async (content: string) => {
   const format_instructions = parser.getFormatInstructions()
   const prompt = new PromptTemplate({
-    template:
-      `You are smart title summarizer
+    template: `You are smart title summarizer
       analyse the following URL,
       If it is not valid url, format your response to inlucde error field \n {format_instructions}\n{URL}
       If URL is valid, visit the page find title and suggest my the short 3 words summary to use it as named shortened link 

@@ -1,17 +1,17 @@
 'use client'
 'use client'
 
-import { ChangeEvent, useActionState, useCallback, useEffect, useState } from 'react'
-import { Input, Radio, RadioGroup } from '@mui/material'
 import { createShortUrl, HomeFormState } from '@/actions/url'
-import SubmitButton from './SubmitButton'
 import { analyse } from '@/utils/ai'
+import { Input, Radio, RadioGroup } from '@mui/material'
+import { ChangeEvent, useActionState, useCallback, useEffect, useState } from 'react'
 import { useAutosave } from 'react-autosave'
+import SubmitButton from './SubmitButton'
 
 const initState: HomeFormState = { longUrl: null, shortUrl: null, backHalf: null }
 
 export const Form = () => {
-  const [destination, setDestination] = useState('https://flexusflow.webflow.io/')
+  const [destination, setDestination] = useState('https://flexusflow.webflow.io/')//https://flexusflow.webflow.io/
   const [title, setTitle] = useState('')
   const [customBackHalf, setCustomBackHalf] = useState('')
   const [aiBackHalf, setAiBackHalf] = useState('')
@@ -28,22 +28,22 @@ export const Form = () => {
     }
   }, [formState])
 
-  useAutosave({
-    data: destination,
-    onSave: async (_url: string) => {
-      console.log('ON SAVE')
-      if (!_url) return
-      setIsSaving(true)
+  // useAutosave({
+  //   data: destination,
+  //   onSave: async (_url: string) => {
+  //     console.log('ON SAVE')
+  //     if (!_url) return
+  //     setIsSaving(true)
 
-      const data = await analyse(_url)
+  //     const data = await analyse(_url)
 
-      if (data) {
-        setBackHalfs(data.shortHashes)
-        setTitle(data.subject)
-      }
-      setIsSaving(false)
-    },
-  })
+  //     if (data) {
+  //       setBackHalfs(data.shortHashes)
+  //       setTitle(data.subject)
+  //     }
+  //     setIsSaving(false)
+  //   },
+  // })
 
   const handleCustomBackHalfChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setAiBackHalf('')
@@ -56,12 +56,12 @@ export const Form = () => {
   }, [])
 
   return (
-    <form className="w-96 h-auto m-auto bg-content1 shadow-lg rounded-md p-3 flex flex-col gap-2">
+    <form className="bg-content1 m-auto flex h-auto w-96 flex-col gap-2 rounded-md p-3 shadow-lg">
       <label htmlFor="destination" className="text-sm text-gray-600">
         Destination
       </label>
       <Input
-        className="border-2w-full  border-purple-200 active:border-purple-400 rounded-md  px-2"
+        className="form-input"
         name="destination"
         required
         value={destination}
@@ -71,18 +71,18 @@ export const Form = () => {
         Title(optional)
       </label>
       <Input
-        className="w-full border-2 border-purple-200 active:border-purple-400 rounded-md"
+        className="form-input"
         name="title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
 
-      {!!backHalfs.length && (
+      {!!backHalfs.length ? (
         <RadioGroup className="flex items-start" value={aiBackHalf || customBackHalf}>
           <span key="custom" className="w-full">
             <Radio color="primary" value={customBackHalf} name="customBackHalf" onChange={handleCustomBackHalfChange} />
             <Input
-              className="w-[calc(100%-50px)]"
+              className="placeholder w-[calc(100%-50px)] "
               value={customBackHalf}
               onChange={handleCustomBackHalfChange}
               placeholder="Custom back-half (optional)"
@@ -96,6 +96,17 @@ export const Form = () => {
             </span>
           ))}
         </RadioGroup>
+      ): (
+        <span key="custom" className="w-full">
+        {/* <Radio color="primary" value={customBackHalf} name="customBackHalf" onChange={handleCustomBackHalfChange} /> */}
+        <Input
+          className="placeholder w-[calc(100%-50px)] "
+          value={customBackHalf}
+          name="customBackHalf"
+          onChange={handleCustomBackHalfChange}
+          placeholder="Custom back-half (optional)"
+        />
+      </span>
       )}
 
       <SubmitButton label="Submit" formAction={formAction} isLoading={isSaving} />
