@@ -1,6 +1,8 @@
-const DashboardLayout = ({ children }) => {
+import { PropsWithChildren } from 'react'
+
+const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
-    <div className="container w-screen h-screen flex justify-center items-center m-auto">
+    <div className="container m-auto flex h-screen w-screen items-center justify-center">
       <div className="w-full max-w-[400px]">{children}</div>
     </div>
   )
