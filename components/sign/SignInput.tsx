@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 type Props = Partial<HTMLInputElement> & { type: string }
 
-export const SignInput = ({ placeholder, type, className }: Props) => {
+export const SignInput = ({ placeholder, type }: Props) => {
   const [inputType, setInputType] = useState('text')
 
   useEffect(() => {
