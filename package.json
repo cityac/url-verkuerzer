@@ -15,6 +15,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@hookform/resolvers": "^3.9.1",
     "@langchain/core": "^0.3.15",
     "@langchain/openai": "^0.3.11",
     "@libsql/client": "^0.14.0",
@@ -34,6 +35,8 @@
     "react": "19.0.0-rc-69d4b800-20241021",
     "react-autosave": "^0.4.4",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
+    "react-hook-form": "^7.53.1",
+    "yup": "^1.4.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

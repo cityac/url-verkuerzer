@@ -2,9 +2,9 @@
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-type Props = Partial<HTMLInputElement> & { type: string }
+type Props = Partial<Pick<HTMLInputElement, 'type' | 'placeholder' | 'required'>> & { type: string }
 
-export const SignInput = ({ placeholder, type }: Props) => {
+export const SignInput = ({ type, ...btnProps }: Props) => {
   const [inputType, setInputType] = useState('text')
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export const SignInput = ({ placeholder, type }: Props) => {
   return (
     <div>
       <div className="relative">
-        <input type={inputType} className="sign-input" placeholder={placeholder} />
+        <input type={inputType} className="sign-input" {...btnProps} />
         {isPassword && (
           <button
             type="button"
