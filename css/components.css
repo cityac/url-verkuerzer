@@ -6,7 +6,18 @@
   }
 
   .form-input {
-    @apply w-full rounded-md border-2 border-purple-200 px-2 hover:border-purple-300 active:border-purple-400 focus:border-purple-950 focus:ring-4;
+    @apply w-full rounded-md border-2 border-purple-200 px-2 hover:border-purple-300 focus:border-purple-950 focus:ring-4 active:border-purple-400;
   }
 
+  .sign-button {
+    @apply w-60 rounded-full bg-gradient-to-r from-clario-blue-50 to-clario-blue-500 px-8 py-4 font-bold leading-4 text-white;
+  }
+
+  .sign-input {
+    @apply block w-full rounded-lg border border-gray-200 py-3 pe-10 ps-4;
+    @apply invalid:border-clario-red-300 invalid:focus:border-clario-red-300 valid:border-clario-green-300 invalid:bg-clario-red-50;
+    @apply focus:border-clario-nebula-blue focus:outline-none;
+    /* @apply hover:border-clario-alice-blue; */
+    @apply disabled:pointer-events-none disabled:opacity-50;
+  }
 }

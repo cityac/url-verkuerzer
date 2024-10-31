@@ -1,6 +1,6 @@
-import { Form } from '@/components/Form'
+import { UrlForm } from '@/components/UrlForm'
 
 const DashboardPage = () => {
-  return <Form />
+  return <UrlForm />
 }
 export default DashboardPage

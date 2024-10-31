@@ -10,7 +10,7 @@ import SubmitButton from './SubmitButton'
 
 const initState: HomeFormState = { longUrl: null, shortUrl: null, backHalf: null }
 
-export const Form = () => {
+export const UrlForm = () => {
   const [destination, setDestination] = useState('https://flexusflow.webflow.io/') //https://flexusflow.webflow.io/
   const [title, setTitle] = useState('')
   const [customBackHalf, setCustomBackHalf] = useState('')
