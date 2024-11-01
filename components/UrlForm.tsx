@@ -27,6 +27,8 @@ export const UrlForm = () => {
     }
   }, [formState])
 
+  // autosave used to run AI analysis of the destination link and suggest BackHalfs
+  // switched off to save money during development ;)
   // useAutosave({
   //   data: destination,
   //   onSave: async (_url: string) => {

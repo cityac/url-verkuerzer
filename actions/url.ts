@@ -10,7 +10,7 @@ export type HomeFormState = {
 
 export const createShortUrl = async (currentState: any, data: FormData) => {
   const destination = data.get('destination') as string
-  const title = data.get('title') as string
+  // const title = data.get('title') as string
   const backHalf = data.get('customBackHalf') as string
 
   console.log({ data })

@@ -15,10 +15,13 @@ import { useValidation } from './validation/schema'
 type State = { message: string | null }
 const initState: State = { message: null }
 
+// with a little changes this component could be used for sing in as well
 export const SignForm = () => {
   const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
   const [validations, setValidations] = useState<AuthValidations | null>(null)
+
+  const [actionState, formAction] = useActionState<State, FormData>(registerUser, initState)
 
   const validationSchema = useMemo(() => {
     const authRules = validations || ({} as AuthValidations)
@@ -28,26 +31,17 @@ export const SignForm = () => {
     })
   }, [validations])
 
-  const [actionState, formAction] = useActionState<State, FormData>(registerUser, initState)
-
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(validationSchema),
   })
-
   const fieldErrors = useValidation(formState)
-
-  useEffect(() => {
-    const fetch = async () => {
-      const authValidations = await getAuthValidations()
-      setValidations(authValidations)
-    }
-    fetch()
-  }, [])
 
   const validationRules = useMemo(() => {
     if (!validations) return []
+
     return validations.password.map((rule) => {
       let className = 'text-primary'
+      // this allows to make 99% of css with Tailwind
       if (formState.touchedFields.email && formState.submitCount > 0) {
         emailRef.current?.setAttribute('aria-submitted', 'true')
       }
@@ -56,6 +50,7 @@ export const SignForm = () => {
         const error =
           fieldErrors.password?.violatedRuleIds?.find((id) => rule.id === id) ||
           fieldErrors.password?.message === 'Password is required'
+        // used to highlight with the color validation rules under the password input field
         className = error ? 'text-clario-red-300' : 'text-clario-green-300'
       }
       return {
@@ -65,6 +60,14 @@ export const SignForm = () => {
       }
     })
   }, [fieldErrors, validations, formState])
+
+  useEffect(() => {
+    const fetch = async () => {
+      const authValidations = await getAuthValidations()
+      setValidations(authValidations)
+    }
+    fetch()
+  }, [])
 
   useEffect(() => {
     if (emailRef.current) {
@@ -77,7 +80,8 @@ export const SignForm = () => {
 
   const handleFormAction = (data: FormData) => {
     startTransition(() => {
-      formAction(data) // Dispatch the async function within startTransition
+      // Dispatch the async function within startTransition
+      formAction(data)
     })
   }
 

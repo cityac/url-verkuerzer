@@ -1,30 +1,10 @@
 'use client'
 import Image from 'next/image'
-import {
-  ComponentPropsWithoutRef,
-  forwardRef,
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { RefCallBack, UseFormRegister } from 'react-hook-form'
-
-type Props = ComponentPropsWithoutRef<'input'> &
-  Partial<Pick<HTMLInputElement, 'type' | 'placeholder' | 'required'>> &
-  Pick<HTMLInputElement, 'name'> & {
-    type: string
-    register: UseFormRegister<{
-      email: string
-      password: string
-    }>
-
-    ref?: RefCallBack
-  }
+import { forwardRef, MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react'
+import { SignInputProps } from './types'
 
 // eslint-disable-next-line react/display-name
-export const SignInput = forwardRef<HTMLInputElement, Props>(
+export const SignInput = forwardRef<HTMLInputElement, SignInputProps>(
   ({ type, name, register, ...inputProps }, forwardedRef) => {
     const [inputType, setInputType] = useState('text')
 

@@ -1,6 +1,8 @@
 import { delay } from '@/utils/delay'
 import { NextResponse } from 'next/server'
 
+// mocked http Get method
+// emulates receiving signup/signing validation rules from the server
 export const GET = async () => {
   await delay(500)
   return NextResponse.json({

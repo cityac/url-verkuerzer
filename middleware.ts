@@ -8,6 +8,8 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/signup', request.url))
     }
   }
+  // if user is signed in redirect to dashboard
+  // TODO implement cookie expiration
   if (request.nextUrl.pathname.startsWith('/signin') || request.nextUrl.pathname.startsWith('/signup')) {
     if (request.cookies.has(COOKIE_NAME)) {
       return NextResponse.redirect(new URL('/dashboard', request.url))

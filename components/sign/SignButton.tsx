@@ -1,13 +1,12 @@
 'use client'
-import { Button, ButtonProps } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import { useFormStatus } from 'react-dom'
+import { SignButtonProps } from './types'
 
-type Props = { label: string } & ButtonProps
-const SignButton = ({ label, ...btnProps }: Props) => {
+const SignButton = ({ label, ...btnProps }: SignButtonProps) => {
   const { pending } = useFormStatus()
-  console.log({ pending })
   return (
-    <Button className="sign-button" {...btnProps} type="submit" isLoading={pending}>
+    <Button type="submit" className="sign-button" {...btnProps} isLoading={pending}>
       {label}
     </Button>
   )
