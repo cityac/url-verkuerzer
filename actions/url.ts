@@ -1,6 +1,6 @@
 import { AppUrl } from '@/utils/config'
 import { delay } from '@/utils/delay'
-import { getSha256Hash, getSimpleHash } from '@/utils/hash'
+import { getSimpleHash } from '@/utils/hash'
 export type HomeFormState = {
   longUrl: string | null
   shortUrl: string | null
@@ -12,7 +12,7 @@ export const createShortUrl = async (currentState: HomeFormState, data: FormData
   const title = data.get('title') as string
   const backHalf = data.get('customBackHalf') as string
 
-  console.log({data})
+  console.log({ data })
 
   let hash: string
   if (backHalf) {

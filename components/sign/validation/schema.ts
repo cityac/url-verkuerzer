@@ -1,77 +1,82 @@
-import { addMethod, object, string, ValidationError } from 'yup'
+import { addMethod, object, string } from 'yup'
 
 import { AuthValidations, ValidationRule } from '@/models/authValidations'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm } from 'react-hook-form'
+import { FieldError, useForm } from 'react-hook-form'
 
 addMethod(string, 'password', function (args) {
-  // return this.test("password", "validation.title", function(value) {
-  //   const { path, createError } = this;
-
-  //   // [value] - value of the property being tested
-  //   // [path]  - property name,
-  //   // ...
-  //   return true;
-
-  // });
-  // var result: StringSchema<string | undefined, Maybe<AnyObject>, undefined, "">
-  let result = this.test('password', 'Password is required', (value) => !value)
-
   const validations = args as ValidationRule[]
   return this.test('password', 'password', function (value) {
-    const { path, createError } = this
+    const { createError } = this
     if (!value) {
       return createError({ message: 'Password is required' })
     }
 
-    var validationPassed = true
-    let error: ValidationError | undefined
+    const violatedRuleIds: string[] = []
     validations.forEach((validation) => {
       Object.entries<number>(validation.rules).forEach(([key, val]) => {
-        console.log({ key, val, value, path })
         switch (key) {
           case 'digit':
-            validationPassed = validationPassed && (value?.match(/\d/g) || []).length >= val
+            if ((value?.match(/\d/g) || []).length < val) {
+              violatedRuleIds.push(validation.id)
+            }
             break
           case 'uppercase':
-            validationPassed = validationPassed && (value?.match(/[A-Z]/g) || []).length >= val
+            if ((value?.match(/[A-Z]/g) || []).length < val) {
+              violatedRuleIds.push(validation.id)
+            }
             break
           case 'lowercase':
-            validationPassed = validationPassed && (value?.match(/[a-z]/g) || []).length >= val
+            if ((value?.match(/[a-z]/g) || []).length < val) {
+              violatedRuleIds.push(validation.id)
+            }
             break
           case 'min':
-            validationPassed = validationPassed && Number(value?.length) >= val
+            if (Number(value?.length) < val) {
+              violatedRuleIds.push(validation.id)
+            }
             break
           case 'max':
-            validationPassed = validationPassed && Number(value?.length) <= val
+            if (Number(value?.length) > val) {
+              violatedRuleIds.push(validation.id)
+            }
             break
-        }
-        if (!validationPassed && !error) {
-          error = createError({ message: validation.title })
         }
       })
     })
-    if (error) return error
+    if (violatedRuleIds.length > 0) return createError({ message: violatedRuleIds.join('|') })
 
     return true
   })
 })
 
 export const useValidation = (value: AuthValidations | null) => {
-  const validations = value || {}
-  console.log({ validations })
+  const validations = value || ({} as AuthValidations)
   const validationSchema = object().shape({
     email: string().required('Email is required').email('Invalid email address'),
-    password: string().password(validations['password'] || []),
-    // .test('password', 'Password is required', (value => !value)
-    // .test('password', 'Password is required', (value => !value)
-
-    // .min(8, 'Password must be at least 8 characters'),
+    password: string().password(validations.password || []),
   })
 
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(validationSchema),
   })
 
-  return { register, handleSubmit, formState }
+  const errors: {
+    [x: string]: CustomFieldError
+  } = {}
+
+  Object.entries(formState.errors).forEach(([key, value]) => {
+    errors[key] = {
+      ...value,
+      type: value.type as string,
+      violatedRuleIds: value.message?.split('|') || [],
+    }
+    Object.assign(value, { violatedRuleIds: value.message?.split('|') })
+  })
+
+  return { register, handleSubmit, formState, errors }
+}
+
+type CustomFieldError = FieldError & {
+  violatedRuleIds: string[]
 }

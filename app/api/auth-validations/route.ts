@@ -7,9 +7,9 @@ export const GET = async () => {
     data: {
       email: [{ title: 'Email is required' }],
       password: [
-        { title: '8 characters or more (no spaces)', rules: { min: 8, max: 64 } },
-        { title: 'Uppercase and lowercase letters', rules: { uppercase: 1, lowercase: 1 } },
-        { title: 'At least one digit', rules: { digit: 1 } },
+        { id: 'characters', title: '8 characters or more (no spaces)', rules: { min: 8, max: 64 } },
+        { id: 'upper-lower-case', title: 'Uppercase and lowercase letters', rules: { uppercase: 1, lowercase: 1 } },
+        { id: 'digits', title: 'At least one digit', rules: { digit: 1 } },
       ],
     },
   })

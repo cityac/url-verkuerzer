@@ -28,6 +28,7 @@ const config: Config = {
         'clario-alice-blue': 'rgba(244, 249, 255, 1)',
         'clario-linen-blue': 'rgba(224, 237, 251, 0.72)',
         'clario-nebula-blue': 'rgba(75, 101, 255, 0.72)',
+        'clario-dim-gray': 'rgba(108, 108, 108, 1)',
       },
     },
   },

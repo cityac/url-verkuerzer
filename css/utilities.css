@@ -1,12 +1,11 @@
 @tailwind utilities;
 
 @layer utilities {
-
-  label:has(+ div>input:required) {
-    @apply after:content-['*'] after:ml-1 after:text-red-600
+  label:has(+ div > input:required) {
+    @apply after:ml-1 after:text-red-600 after:content-['*'];
   }
 
   label:has(+ input:valid) {
-    @apply text-teal-600
+    @apply text-teal-600;
   }
 }
