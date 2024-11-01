@@ -1,5 +1,4 @@
 'use client'
-'use client'
 
 import { createShortUrl, HomeFormState } from '@/actions/url'
 // import { analyse } from '@/utils/ai'
@@ -8,10 +7,10 @@ import { ChangeEvent, useActionState, useCallback, useEffect, useState } from 'r
 // import { useAutosave } from 'react-autosave'
 import SubmitButton from './SubmitButton'
 
-const initState: HomeFormState = { longUrl: null, shortUrl: null, backHalf: null }
+const initState: HomeFormState = { longUrl: null, shortUrl: null, backHalf: null, message: null }
 
 export const UrlForm = () => {
-  const [destination, setDestination] = useState('https://flexusflow.webflow.io/') //https://flexusflow.webflow.io/
+  const [destination, setDestination] = useState('') //https://flexusflow.webflow.io/
   const [title, setTitle] = useState('')
   const [customBackHalf, setCustomBackHalf] = useState('')
   const [aiBackHalf, setAiBackHalf] = useState('')
@@ -19,7 +18,7 @@ export const UrlForm = () => {
   const [backHalfs, setBackHalfs] = useState<string[]>([])
   // const [isSaving, setIsSaving] = useState(false)
 
-  const [formState, formAction] = useActionState<HomeFormState>(createShortUrl, initState)
+  const [formState, formAction] = useActionState<HomeFormState, FormData>(createShortUrl, initState)
   useEffect(() => {
     if (formState.shortUrl) {
       setDestination('')

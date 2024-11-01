@@ -1,9 +1,13 @@
 'use client'
-import { registerUser } from '@/actions/sign-up'
-import { AuthValidations, UIValidationRule } from '@/models/authValidations'
+
+import { registerUser } from '@/actions/signup'
+import { AuthValidations } from '@/models/authValidations'
+import { FormData } from '@/models/uiValidations'
 import { getAuthValidations } from '@/utils/api'
-import Link from 'next/link'
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { startTransition, useActionState, useEffect, useMemo, useRef, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { object, string } from 'yup'
 import SignButton from './SignButton'
 import { SignInput } from './SignInput'
 import { useValidation } from './validation/schema'
@@ -15,82 +19,99 @@ export const SignForm = () => {
   const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
   const [validations, setValidations] = useState<AuthValidations | null>(null)
-  const [validationRules, setValidationRules] = useState<UIValidationRule[] | null>(null)
 
-  const [, formAction] = useActionState<State, FormData>(registerUser, initState)
+  const validationSchema = useMemo(() => {
+    const authRules = validations || ({} as AuthValidations)
+    return object().shape({
+      email: string().required('Email is required').email('Invalid email address'),
+      password: string().password(authRules.password || []),
+    })
+  }, [validations])
 
-  const {
-    register,
-    formState: { touchedFields },
-    errors,
-  } = useValidation(validations)
+  const [actionState, formAction] = useActionState<State, FormData>(registerUser, initState)
+
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(validationSchema),
+  })
+
+  const fieldErrors = useValidation(formState)
 
   useEffect(() => {
     const fetch = async () => {
       const authValidations = await getAuthValidations()
-
       setValidations(authValidations)
     }
     fetch()
   }, [])
 
-  useEffect(() => {
-    if (!validations?.password.length) {
-      return
-    }
-    const rules: UIValidationRule[] = validations.password.map((rule) => {
+  const validationRules = useMemo(() => {
+    if (!validations) return []
+    return validations.password.map((rule) => {
       let className = 'text-primary'
-      if (touchedFields.password) {
+      if (formState.touchedFields.email && formState.submitCount > 0) {
+        emailRef.current?.setAttribute('aria-submitted', 'true')
+      }
+      if (formState.touchedFields.password && formState.submitCount > 0) {
+        passwordRef.current?.setAttribute('aria-submitted', 'true')
         const error =
-          errors?.password?.violatedRuleIds?.find((id) => rule.id === id) ||
-          errors.password?.message === 'Password is required'
+          fieldErrors.password?.violatedRuleIds?.find((id) => rule.id === id) ||
+          fieldErrors.password?.message === 'Password is required'
         className = error ? 'text-clario-red-300' : 'text-clario-green-300'
       }
-
       return {
         id: rule.id,
         title: rule.title,
         className,
       }
     })
-    setValidationRules(rules)
-  }, [validations, errors, touchedFields])
+  }, [fieldErrors, validations, formState])
 
   useEffect(() => {
     if (emailRef.current) {
-      emailRef.current.setCustomValidity(errors?.email?.message ? errors.email.message : '')
+      emailRef.current.setCustomValidity(fieldErrors?.email?.message || '')
     }
     if (passwordRef.current) {
-      passwordRef.current.setCustomValidity(errors?.password?.message ? errors.password.message : '')
+      passwordRef.current.setCustomValidity(fieldErrors?.password?.message || '')
     }
-  }, [emailRef, passwordRef, errors, touchedFields])
+  }, [fieldErrors])
+
+  const handleFormAction = (data: FormData) => {
+    startTransition(() => {
+      formAction(data) // Dispatch the async function within startTransition
+    })
+  }
+
+  const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
+    handleFormAction(data)
+  }
 
   return (
-    <form className="mt-10 w-80" noValidate action={formAction}>
+    <form className="mt-10 w-80" onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="grid gap-5">
         <SignInput name="email" type="text" placeholder="Email" register={register} ref={emailRef} />
         <SignInput
           name="password"
           type="password"
-          placeholder="Create you password"
+          placeholder="Create your password"
           register={register}
           ref={passwordRef}
         />
         <div className="grid gap-1 px-5">
-          {validationRules &&
-            validationRules.map((rule) => (
-              <p className={rule.className} key={rule.id}>
-                {rule.title}
-              </p>
-            ))}
+          {validationRules.map((rule) => (
+            <p className={rule.className} key={rule.id}>
+              {rule.title}
+            </p>
+          ))}
         </div>
       </div>
       <div className="mt-10 flex w-full justify-around">
         <SignButton label={'Sign-up'} />
       </div>
-      <div className="mt-10 flex w-full justify-around">
-        <Link href="/sign-in">{`Already have an account?`}</Link>
-      </div>
+      {actionState.message && (
+        <div className="text-clario-red-300 mt-10 flex w-full justify-around px-5 text-center">
+          {actionState.message}
+        </div>
+      )}
     </form>
   )
 }

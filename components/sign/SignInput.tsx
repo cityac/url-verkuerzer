@@ -19,6 +19,7 @@ type Props = ComponentPropsWithoutRef<'input'> &
       email: string
       password: string
     }>
+
     ref?: RefCallBack
   }
 
@@ -47,9 +48,11 @@ export const SignInput = forwardRef<HTMLInputElement, Props>(
             {...inputProps}
             {...rest}
             ref={(e: HTMLInputElement) => {
-              ref(e)
-              const f = forwardedRef as MutableRefObject<HTMLInputElement>
-              f.current = e
+              if (ref) {
+                ref(e)
+                const f = forwardedRef as MutableRefObject<HTMLInputElement>
+                f.current = e
+              }
             }}
           />
           {isPassword && (

@@ -12,6 +12,9 @@ const config: Config = {
     },
     screens: {},
     extend: {
+      aria: {
+        submitted: 'submitted="true"',
+      },
       fontFamily: {
         sans: ['var(--font-inter)'],
       },

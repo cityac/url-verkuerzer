@@ -1,4 +1,5 @@
 'use server'
+import { FormData } from '@/models/uiValidations'
 import { signup } from '@/utils/authTools'
 import { COOKIE_NAME } from '@/utils/constants'
 
@@ -11,12 +12,12 @@ const authSchema = z.object({
 })
 
 export const registerUser = async (prevState: any, formData: FormData) => {
+  console.log(formData)
+  debugger
   const data = authSchema.parse({
-    email: formData.get('email'),
-    password: formData.get('password'),
+    email: formData.email,
+    password: formData.password,
   })
-
-  console.log({ data })
 
   try {
     const { token } = await signup(data)
@@ -24,8 +25,9 @@ export const registerUser = async (prevState: any, formData: FormData) => {
     cook.set(COOKIE_NAME, token)
   } catch (e) {
     console.error(e)
-    return { message: 'Failed to sign you up' }
-  }
+    let message = 'Failed to sign you up.' + (e.code === 'SQLITE_CONSTRAINT' ? ' Account already exists' : '')
 
+    return { message }
+  }
   redirect('/dashboard')
 }

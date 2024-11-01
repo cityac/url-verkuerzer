@@ -1,8 +1,9 @@
-import { addMethod, object, string } from 'yup'
+import { addMethod, string } from 'yup'
 
-import { AuthValidations, ValidationRule } from '@/models/authValidations'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { FieldError, useForm } from 'react-hook-form'
+import { ValidationRule } from '@/models/authValidations'
+import { CustomFieldErrors } from '@/models/uiValidations'
+import { useEffect, useState } from 'react'
+import { FormState } from 'react-hook-form'
 
 addMethod(string, 'password', function (args) {
   const validations = args as ValidationRule[]
@@ -50,33 +51,29 @@ addMethod(string, 'password', function (args) {
   })
 })
 
-export const useValidation = (value: AuthValidations | null) => {
-  const validations = value || ({} as AuthValidations)
-  const validationSchema = object().shape({
-    email: string().required('Email is required').email('Invalid email address'),
-    password: string().password(validations.password || []),
-  })
+export const useValidation = (formState: FormState<{ password: string; email: string }>): CustomFieldErrors => {
+  const [errors, setErrors] = useState<CustomFieldErrors>({})
 
-  const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(validationSchema),
-  })
+  useEffect(() => {
+    const updatedErrors: CustomFieldErrors = {}
+    Object.entries(formState.errors).forEach(([key, value]) => {
+      updatedErrors[key] = {
+        ...value,
+        type: value.type as string,
+        violatedRuleIds: value.message?.split('|') || [],
+      }
+    })
+    const hasErrorsChanged =
+      Object.keys(errors).length !== Object.keys(updatedErrors).length ||
+      Object.entries(updatedErrors).some(([key, newValue]) => {
+        const oldValue = errors[key]
+        return oldValue?.message !== newValue.message || oldValue?.type !== newValue.type
+      })
 
-  const errors: {
-    [x: string]: CustomFieldError
-  } = {}
-
-  Object.entries(formState.errors).forEach(([key, value]) => {
-    errors[key] = {
-      ...value,
-      type: value.type as string,
-      violatedRuleIds: value.message?.split('|') || [],
+    if (hasErrorsChanged) {
+      setErrors(updatedErrors)
     }
-    Object.assign(value, { violatedRuleIds: value.message?.split('|') })
-  })
+  }, [formState.errors])
 
-  return { register, handleSubmit, formState, errors }
-}
-
-type CustomFieldError = FieldError & {
-  violatedRuleIds: string[]
+  return errors
 }

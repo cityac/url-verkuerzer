@@ -1,22 +1,24 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+import { COOKIE_NAME } from './utils/constants'
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)'])
-// const isPublicRoute = createRouteMatcher(['/'])
-
-export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    const authObject = await auth()
-    if (!authObject.userId) {
-      authObject.redirectToSignIn()
+export function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (!request.cookies.has(COOKIE_NAME)) {
+      return NextResponse.redirect(new URL('/signup', request.url))
     }
   }
-})
+  if (request.nextUrl.pathname.startsWith('/signin') || request.nextUrl.pathname.startsWith('/signup')) {
+    if (request.cookies.has(COOKIE_NAME)) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+  }
+
+  if (request.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+}
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
+  matcher: ['/dashboard/:path*', '/signin', '/signup'],
 }

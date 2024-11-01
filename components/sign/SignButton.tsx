@@ -5,6 +5,7 @@ import { useFormStatus } from 'react-dom'
 type Props = { label: string } & ButtonProps
 const SignButton = ({ label, ...btnProps }: Props) => {
   const { pending } = useFormStatus()
+  console.log({ pending })
   return (
     <Button className="sign-button" {...btnProps} type="submit" isLoading={pending}>
       {label}
