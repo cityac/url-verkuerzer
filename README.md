@@ -1,5 +1,13 @@
 # Project Documentation
 
+## Run project
+
+```
+yarn install
+yarn build
+yarn start
+```
+
 ## Overview
 
 This application leverages **Clerk** for user management, **Drizzle ORM** to handle an **SQLite** database, and **Turso** for online database replication. The project is deployed on the **Vercel** platform, offering a smooth and scalable serverless environment. **Tailwind CSS** is used extensively for styling, providing a responsive, utility-first design approach.
