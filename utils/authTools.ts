@@ -6,9 +6,9 @@ import jwt from 'jsonwebtoken'
 import 'server-only'
 
 function getSecret(): string {
-  const secret = process.env.JWT_SECRET
+  const secret = process.env.NEXT_PUBLIC_JWT_SECRET
   if (!secret) {
-    throw new Error('JWT_SECRET environment variable is not set')
+    throw new Error('NEXT_PUBLIC_JWT_SECRET environment variable is not set')
   }
   return secret
 }

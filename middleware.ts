@@ -4,9 +4,9 @@ import { jwtVerify } from 'jose'
 import { COOKIE_NAME } from './utils/constants'
 
 async function verifyToken(token: string): Promise<boolean> {
-  const secret = process.env.JWT_SECRET
+  const secret = process.env.NEXT_PUBLIC_JWT_SECRET
   if (!secret) {
-    console.error('JWT_SECRET is not configured')
+    console.error('NEXT_PUBLIC_JWT_SECRET is not configured')
     return false
   }
 
