@@ -5,26 +5,40 @@ import { eq } from 'drizzle-orm'
 import jwt from 'jsonwebtoken'
 import 'server-only'
 
-const SECRET = 'use_an_ENV_VAR'
+const SECRET = process.env.JWT_SECRET
+
+if (!SECRET) {
+  throw new Error('JWT_SECRET environment variable is not set')
+}
 
 export const createTokenForUser = (userId: string) => {
-  const token = jwt.sign({ id: userId }, SECRET)
+  const token = jwt.sign({ id: userId }, SECRET, {
+    expiresIn: '7d', // 7 days
+  })
   return token
 }
 
 export const getUserFromToken = async (token: { name: string; value: string }) => {
-  const payload = jwt.verify(token.value, SECRET) as { id: string }
+  try {
+    const payload = jwt.verify(token.value, SECRET) as { id: string }
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.id, payload.id),
-    columns: {
-      id: true,
-      email: true,
-      createdAt: true,
-    },
-  })
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, payload.id),
+      columns: {
+        id: true,
+        email: true,
+        createdAt: true,
+      },
+    })
 
-  return user
+    return user
+  } catch (error) {
+    // Token is invalid or expired
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw new Error('Invalid or expired token')
+    }
+    throw error
+  }
 }
 
 export const signin = async ({ email, password }: { email: string; password: string }) => {

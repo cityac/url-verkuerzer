@@ -12,8 +12,6 @@ const authSchema = z.object({
 })
 
 export const registerUser = async (prevState: any, formData: FormData) => {
-  console.log(formData)
-  debugger
   const data = authSchema.parse({
     email: formData.email,
     password: formData.password,
@@ -22,7 +20,13 @@ export const registerUser = async (prevState: any, formData: FormData) => {
   try {
     const { token } = await signup(data)
     var cook = await require('next/headers').cookies()
-    cook.set(COOKIE_NAME, token)
+    cook.set(COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    })
   } catch (e) {
     console.error(e)
     let message = 'Failed to sign you up.' + (e.code === 'SQLITE_CONSTRAINT' ? ' Account already exists' : '')
