@@ -16,7 +16,8 @@ export const UrlForm = () => {
   const [aiBackHalf, setAiBackHalf] = useState('')
   // eslint-disable-next-line
   const [backHalfs, setBackHalfs] = useState<string[]>([])
-  const [_, setIsSaving] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  console.log({isSaving})
 
   const [formState, formAction] = useActionState<HomeFormState, FormData>(createShortUrl, initState)
   useEffect(() => {
