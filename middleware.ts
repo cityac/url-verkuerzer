@@ -1,25 +1,31 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import jwt from 'jsonwebtoken'
+import { jwtVerify } from 'jose'
 import { COOKIE_NAME } from './utils/constants'
 
-const SECRET = process.env.JWT_SECRET
+async function verifyToken(token: string): Promise<boolean> {
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    console.error('JWT_SECRET is not configured')
+    return false
+  }
 
-export function middleware(request: NextRequest) {
+  try {
+    const secretKey = new TextEncoder().encode(secret)
+    await jwtVerify(token, secretKey)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get(COOKIE_NAME)
 
   // Verify token validity and expiration
   let isValidToken = false
   if (token) {
-    try {
-      if (SECRET) {
-        jwt.verify(token.value, SECRET)
-        isValidToken = true
-      }
-    } catch (error) {
-      // Token is invalid or expired
-      isValidToken = false
-    }
+    isValidToken = await verifyToken(token.value)
   }
 
   if (request.nextUrl.pathname.startsWith('/dashboard')) {

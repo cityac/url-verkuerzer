@@ -5,14 +5,16 @@ import { eq } from 'drizzle-orm'
 import jwt from 'jsonwebtoken'
 import 'server-only'
 
-const SECRET = process.env.JWT_SECRET
-
-if (!SECRET) {
-  throw new Error('JWT_SECRET environment variable is not set')
+function getSecret(): string {
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is not set')
+  }
+  return secret
 }
 
 export const createTokenForUser = (userId: string) => {
-  const token = jwt.sign({ id: userId }, SECRET, {
+  const token = jwt.sign({ id: userId }, getSecret(), {
     expiresIn: '7d', // 7 days
   })
   return token
@@ -20,7 +22,7 @@ export const createTokenForUser = (userId: string) => {
 
 export const getUserFromToken = async (token: { name: string; value: string }) => {
   try {
-    const payload = jwt.verify(token.value, SECRET) as { id: string }
+    const payload = jwt.verify(token.value, getSecret()) as { id: string }
 
     const user = await db.query.users.findFirst({
       where: eq(users.id, payload.id),
