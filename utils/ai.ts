@@ -36,7 +36,7 @@ export const analyse = async (content: string) => {
   const input = await getPrompt(content)
   const model = new ChatOpenAI({
     temperature: 0.9,
-    model: 'gpt-4o',
+    model: 'gpt-4o-mini',
     apiKey: openApiKey,
   })
   const result = await model.invoke(input)

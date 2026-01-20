@@ -1,10 +1,10 @@
 'use client'
 
 import { createShortUrl, HomeFormState } from '@/actions/url'
-// import { analyse } from '@/utils/ai'
+import { analyse } from '@/utils/ai'
 import { Input, Radio, RadioGroup } from '@mui/material'
 import { ChangeEvent, useActionState, useCallback, useEffect, useState } from 'react'
-// import { useAutosave } from 'react-autosave'
+import { useAutosave } from 'react-autosave'
 import SubmitButton from './SubmitButton'
 
 const initState: HomeFormState = { longUrl: null, shortUrl: null, backHalf: null, message: null }
@@ -16,7 +16,7 @@ export const UrlForm = () => {
   const [aiBackHalf, setAiBackHalf] = useState('')
   // eslint-disable-next-line
   const [backHalfs, setBackHalfs] = useState<string[]>([])
-  // const [isSaving, setIsSaving] = useState(false)
+  const [_, setIsSaving] = useState(false)
 
   const [formState, formAction] = useActionState<HomeFormState, FormData>(createShortUrl, initState)
   useEffect(() => {
@@ -29,22 +29,22 @@ export const UrlForm = () => {
 
   // autosave used to run AI analysis of the destination link and suggest BackHalfs
   // switched off to save money during development ;)
-  // useAutosave({
-  //   data: destination,
-  //   onSave: async (_url: string) => {
-  //     console.log('ON SAVE')
-  //     if (!_url) return
-  //     setIsSaving(true)
+  useAutosave({
+    data: destination,
+    onSave: async (_url: string) => {
+      console.log('ON SAVE')
+      if (!_url) return
+      setIsSaving(true)
 
-  //     const data = await analyse(_url)
+      const data = await analyse(_url)
 
-  //     if (data) {
-  //       setBackHalfs(data.shortHashes)
-  //       setTitle(data.subject)
-  //     }
-  //     setIsSaving(false)
-  //   },
-  // })
+      if (data) {
+        setBackHalfs(data.shortHashes)
+        setTitle(data.subject)
+      }
+      setIsSaving(false)
+    },
+  })
 
   const handleCustomBackHalfChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setAiBackHalf('')

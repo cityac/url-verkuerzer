@@ -1,21 +1,20 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import jwt from 'jsonwebtoken'
+import { jwtVerify } from 'jose'
 import { COOKIE_NAME } from './utils/constants'
 
 const SECRET = process.env.JWT_SECRET
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get(COOKIE_NAME)
 
   // Verify token validity and expiration
   let isValidToken = false
-  if (token) {
+  if (token && SECRET) {
     try {
-      if (SECRET) {
-        jwt.verify(token.value, SECRET)
-        isValidToken = true
-      }
+      const secretKey = new TextEncoder().encode(SECRET)
+      await jwtVerify(token.value, secretKey)
+      isValidToken = true
     } catch (error) {
       // Token is invalid or expired
       isValidToken = false

@@ -26,18 +26,25 @@ export const metadata: Metadata = {
   description: 'URL shortcut with ai',
 }
 
+const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased ${inter.variable} font-sans`}>
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+  const content = (
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased ${inter.variable} font-sans`}>
+        {children}
+      </body>
+    </html>
   )
+
+  // Only use ClerkProvider if keys are configured
+  if (clerkPubKey) {
+    return <ClerkProvider>{content}</ClerkProvider>
+  }
+
+  return content
 }
